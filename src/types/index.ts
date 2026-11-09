@@ -1,0 +1,20 @@
+export type AuthorInfo = { id: string; username?: string | null; avatar_url?: string | null; full_name?: string | null; };
+export type Profile = { id: string; username?: string | null; full_name?: string | null; avatar_url?: string | null; bio?: string | null; email?: string; [key: string]: any; };
+export type User = Profile;
+export type Post = { id: string; user_id?: string; author_id?: string; caption?: string | null; content?: string | null; media_url?: string | null; media_type?: string | null; image_url?: string | null; images?: string[]; created_at?: string; like_count?: number; likes_count?: number; comments_count?: number; liked?: boolean; following?: boolean; place_name?: string | null; business_id?: string | null; event_id?: string | null; author?: AuthorInfo | null; business?: any; event?: any; [key: string]: any; };
+export type PostThumb = { id: string; media_url?: string | null; media_type?: string | null; like_count?: number; [key: string]: any; };
+export type Comment = { id: string; post_id: string; user_id?: string; body?: string | null; content?: string | null; text?: string | null; created_at?: string; author?: AuthorInfo | null; user?: AuthorInfo | null; [key: string]: any; };
+export type Business = { id: string; name: string; description?: string | null; category?: string | null; image_url?: string | null; cover_url?: string | null; owner_id?: string; address?: string | null; city?: string | null; [key: string]: any; };
+export type Story = { id: string; user_id?: string; media_url?: string | null; media_type?: string | null; created_at?: string; expires_at?: string; author?: AuthorInfo | null; user?: AuthorInfo | null; [key: string]: any; };
+export type StoryGroup = { user: AuthorInfo; stories: Story[]; };
+export type AppEvent = { id: string; title: string; description?: string | null; date?: string | null; starts_at?: string | null; ends_at?: string | null; category?: string | null; image_url?: string | null; cover_url?: string | null; address?: string | null; city?: string | null; [key: string]: any; };
+export type EventItem = AppEvent;
+export type Promotion = { id: string; business_id?: string; title: string; description?: string | null; media_url?: string | null; ends_at?: string | null; created_at?: string; [key: string]: any; };
+export type ReviewTarget = "business" | "event";
+export type Review = { id: string; user_id?: string; target_type?: ReviewTarget; target_id?: string; rating: number; comment?: string | null; created_at?: string; author?: AuthorInfo | null; [key: string]: any; };
+export type Category = string;
+export type MediaType = "image" | "video";
+export const BUSINESS_CATEGORIES: CategoryOption[] = [{key:"restaurant",label:"Restaurant"},{key:"cafe",label:"Cafe"},{key:"shop",label:"Shop"},{key:"salon",label:"Salon"},{key:"gym",label:"Gym"},{key:"hotel",label:"Hotel"},{key:"other",label:"Other"}];
+export const EVENT_CATEGORIES: CategoryOption[] = [{key:"party",label:"Party"},{key:"concert",label:"Concert"},{key:"workshop",label:"Workshop"},{key:"meetup",label:"Meetup"},{key:"sports",label:"Sports"},{key:"other",label:"Other"}];
+
+ export type CategoryOption = { key: string; label: string; };
