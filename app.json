@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Shiana",
-    "slug": "shiana",
+    "slug": "Shiana",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -73,7 +73,20 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "react-native-vision-camera"
+      "react-native-vision-camera",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": false,
+            "extraGradleProperties": {
+              "org.gradle.jvmargs": "-Xmx6g -XX:MaxMetaspaceSize=2g",
+              "org.gradle.daemon": "true",
+              "org.gradle.parallel": "true"
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
