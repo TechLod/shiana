@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Shiana",
-    "slug": "Shiana",
+    "slug": "shiana",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -73,7 +73,6 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "react-native-vision-camera",
       [
         "expo-build-properties",
         {
@@ -90,7 +89,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     },
     "extra": {
       "router": {},
