@@ -1,31 +1,84 @@
 import { supabase } from '@/lib/supabase';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+// Keep splash visible until we are ready
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
   const router = useRouter();
   const segments = useSegments() as any;
+  const navigationState = useRootNavigationState();
+  const [checkedAuth, setCheckedAuth] = useState(false);
 
   useEffect(() => {
-    const forceReady = setTimeout(() => setReady(true), 800);
-    
-    supabase.auth.getSession().then(({ data }) => {
-      clearTimeout(forceReady);
-      setReady(true);
-      const hasSession = !!data.session;
-      const inAuth = segments[0] === '(auth)';
-      if (!hasSession && !inAuth) router.replace('/(auth)/login' as any);
-      else if (hasSession && inAuth) router.replace('/(tabs)' as any);
-    }).catch(() => {
-      setReady(true);
-      router.replace('/(auth)/login' as any);
-    });
+    let mounted = true;
 
-    return () => clearTimeout(forceReady);
-  }, []);
+    async function checkAuth() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!mounted) return;
+        const hasSession = !!data.session;
+        const inAuth = segments[0] === '(auth)';
 
-  if (!ready) return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}><ActivityIndicator /></View>;
-  return <Stack screenOptions={{ headerShown: false }} />;
+        // Only navigate when navigation is ready
+        if (navigationState?.key) {
+          if (!hasSession && !inAuth) {
+            router.replace('/(auth)/login' as any);
+          } else if (hasSession && inAuth) {
+            router.replace('/(tabs)' as any);
+          }
+        }
+      } catch {
+        // Don't crash if supabase fails - just go to login
+        if (mounted && navigationState?.key) {
+          router.replace('/(auth)/login' as any);
+        }
+      } finally {
+        if (mounted) {
+          setCheckedAuth(true);
+          setReady(true);
+        }
+      }
+    }
+
+    // Safety timeout - never stay stuck on white screen
+    const timeout = setTimeout(() => {
+      if (mounted) {
+        setCheckedAuth(true);
+        setReady(true);
+      }
+    }, 3000);
+
+    checkAuth();
+
+    return () => {
+      mounted = false;
+      clearTimeout(timeout);
+    };
+  }, [navigationState?.key]);
+
+  useEffect(() => {
+    if (ready && checkedAuth) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [ready, checkedAuth]);
+
+  if (!ready) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#208AEF' }}>
+        <ActivityIndicator color="white" size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }} />
+    </GestureHandlerRootView>
+  );
 }
